@@ -1,0 +1,23 @@
+.{
+    .name = .zig_template,
+    .version = "0.1.0",
+    .fingerprint = 0xf2a35603d8ab48e9,
+    .minimum_zig_version = "0.15.2",
+
+    .dependencies = .{
+        // Add dependencies here
+        // Example:
+        // .somelib = .{
+        //     .url = "https://github.com/user/repo/archive/commit.tar.gz",
+        //     .hash = "1220...", // Use 'zig fetch' to get the hash
+        // },
+    },
+
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+        "LICENSE",
+        "README.md",
+    },
+}

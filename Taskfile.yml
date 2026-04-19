@@ -1,0 +1,91 @@
+version: "3"
+
+# Built-in variables used: ROOT_DIR
+output: prefixed
+
+vars:
+  BINARY:
+    sh: basename -s .git $(git remote get-url origin 2>/dev/null || echo "zig-template")
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+
+  build:
+    desc: Build the project (optimized for debug)
+    cmds:
+      - zig build
+
+  build:release:
+    desc: Build optimized release binary
+    cmds:
+      - zig build -Doptimize=ReleaseSafe
+
+  build:fast:
+    desc: Build optimized for speed (ReleaseFast)
+    cmds:
+      - zig build -Doptimize=ReleaseFast
+
+  build:small:
+    desc: Build optimized for size (ReleaseSmall)
+    cmds:
+      - zig build -Doptimize=ReleaseSmall
+
+  run:
+    desc: Build and run the executable
+    cmds:
+      - zig build run
+
+  check:
+    desc: Check if code compiles without building
+    cmds:
+      - zig build check
+
+  test:
+    desc: Run all tests
+    cmds:
+      - zig build test
+
+  test:verbose:
+    desc: Run tests with verbose output
+    cmds:
+      - zig build test --summary all
+
+  fmt:
+    desc: Format all Zig source files
+    cmds:
+      - zig fmt src/
+
+  fmt:check:
+    desc: Check if files are formatted correctly
+    cmds:
+      - zig fmt --check src/
+
+  lint:
+    desc: Run all linting checks
+    cmds:
+      - task: fmt:check
+
+  clean:
+    desc: Clean build artifacts
+    cmds:
+      - rm -rf zig-out zig-cache .zig-cache
+
+  install:
+    desc: Install the binary to zig-out/bin
+    cmds:
+      - zig build install -Doptimize=ReleaseSafe
+
+  docs:
+    desc: Generate documentation
+    cmds:
+      - zig build-lib src/root.zig -femit-docs -fno-emit-bin
+
+  ci:
+    desc: Run CI checks (fmt, build, test)
+    cmds:
+      - task: fmt:check
+      - task: build
+      - task: test

@@ -1,0 +1,41 @@
+# Zig build artifacts
+zig-cache/
+zig-out/
+.zig-cache/
+
+# Editor and IDE files
+*~
+.*.swp
+.swp
+.vscode/
+.idea/
+.DS_Store
+
+# Nix
+.direnv/
+.envrc.local
+result*
+
+# Task management
+.tasks/
+.trash/
+
+# Logs
+*.log
+
+# Local environment
+.env
+.env.local
+
+# Build outputs
+/bin
+/dist
+
+# Testing artifacts
+*.test
+*.ppm
+*.qcow2
+vgcore.*
+
+# Claude Code local settings
+.claude/settings.local.json
