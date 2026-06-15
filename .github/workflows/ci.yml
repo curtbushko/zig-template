@@ -13,28 +13,29 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Zig
-        uses: mlugg/setup-zig@v1
-        with:
-          version: 0.15.2
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Setup Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
 
       - name: Check formatting
-        run: zig fmt --check src/
+        run: nix develop -c zig fmt --check src/
 
       - name: Build (debug)
-        run: zig build
+        run: nix develop -c zig build
 
       - name: Run tests
-        run: zig build test
+        run: nix develop -c zig build test
 
       - name: Build (release)
-        run: zig build -Doptimize=ReleaseSafe
+        run: nix develop -c zig build -Doptimize=ReleaseSafe
 
   lint:
     name: Lint
@@ -44,13 +45,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Zig
-        uses: mlugg/setup-zig@v1
-        with:
-          version: 0.15.2
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Setup Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
 
       - name: Check formatting
-        run: zig fmt --check src/
+        run: nix develop -c zig fmt --check src/
 
       - name: Check compilation
-        run: zig build check
+        run: nix develop -c zig build check
