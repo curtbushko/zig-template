@@ -22,8 +22,8 @@
           config.allowUnfree = true;
         };
 
-        # Pin to Zig 0.15.2
-        zigPkg = zig-overlay.packages.${system}."0.15.2";
+        # Pin to Zig 0.16.0
+        zigPkg = zig-overlay.packages.${system}."0.16.0";
 
         # Make wrapper to allow 'make' command to call task
         make-wrapper = pkgs.writeShellScriptBin "make" ''
