@@ -25,6 +25,11 @@
         # Pin to Zig 0.15.2
         zigPkg = zig-overlay.packages.${system}."0.15.2";
 
+        # Make wrapper to allow 'make' command to call task
+        make-wrapper = pkgs.writeShellScriptBin "make" ''
+          exec ${pkgs.go-task}/bin/task "$@"
+        '';
+
       in {
         devShells.default = pkgs.mkShell {
           packages = with pkgs; [
@@ -33,6 +38,7 @@
 
             # Task runner (used as make replacement)
             go-task
+            make-wrapper
 
             # Development tools
             git

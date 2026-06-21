@@ -10,6 +10,7 @@ zig-out/
 .vscode/
 .idea/
 .DS_Store
+.tmp/
 
 # Nix
 .direnv/
