@@ -63,10 +63,16 @@ tasks:
     cmds:
       - zig fmt --check src/
 
+  lint:zlint:
+    desc: Run zlint static analysis
+    cmds:
+      - zlint
+
   lint:
     desc: Run all linting checks
     cmds:
       - task: fmt:check
+      - task: lint:zlint
 
   clean:
     desc: Clean build artifacts
@@ -84,8 +90,9 @@ tasks:
       - zig build-lib src/root.zig -femit-docs -fno-emit-bin
 
   ci:
-    desc: Run CI checks (fmt, build, test)
+    desc: Run CI checks (fmt, lint, build, test)
     cmds:
       - task: fmt:check
+      - task: lint:zlint
       - task: build
       - task: test

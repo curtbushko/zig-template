@@ -4,7 +4,7 @@ const app = @import("app");
 const testing = std.testing;
 
 const MockItemRepo = struct {
-    items: [32]domain.Item = undefined,
+    items: [32]domain.Item,
     count: usize = 0,
 
     pub fn save(self: *MockItemRepo, item: domain.Item) !void {
@@ -22,7 +22,7 @@ const MockItemRepo = struct {
 };
 
 test "ItemService addItem succeeds with valid name" {
-    var repo = MockItemRepo{};
+    var repo = MockItemRepo{ .items = undefined };
     const ItemService = app.ItemService(MockItemRepo);
     var service = ItemService.init(&repo);
 
@@ -32,7 +32,7 @@ test "ItemService addItem succeeds with valid name" {
 }
 
 test "ItemService addItem rejects empty name" {
-    var repo = MockItemRepo{};
+    var repo = MockItemRepo{ .items = undefined };
     const ItemService = app.ItemService(MockItemRepo);
     var service = ItemService.init(&repo);
 
@@ -40,7 +40,7 @@ test "ItemService addItem rejects empty name" {
 }
 
 test "ItemService addItem rejects duplicate name" {
-    var repo = MockItemRepo{};
+    var repo = MockItemRepo{ .items = undefined };
     const ItemService = app.ItemService(MockItemRepo);
     var service = ItemService.init(&repo);
 

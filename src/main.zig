@@ -14,7 +14,7 @@ pub fn main() !void {
     var service = ItemService.init(&repo);
 
     const item = try service.addItem("example");
-    std.debug.print("Added item: {s}\n", .{item.name});
+    std.log.info("Added item: {s}", .{item.name});
 
-    std.debug.print("\nzig-template is working!\n", .{});
+    std.log.info("zig-template is working!", .{});
 }

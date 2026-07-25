@@ -45,6 +45,7 @@
 
             # Optional: Language servers and formatters
             zls  # Zig Language Server
+            zig-zlint  # Zig linter (DonIsaac/zlint)
           ];
 
           shellHook = ''
