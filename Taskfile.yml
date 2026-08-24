@@ -6,6 +6,7 @@ output: prefixed
 vars:
   BINARY:
     sh: basename -s .git $(git remote get-url origin 2>/dev/null || echo "zig-template")
+  ZIG_CACHE_MAX_KIB: '{{default "10485760" .ZIG_CACHE_MAX_KIB}}'
 
 tasks:
   default:
@@ -13,33 +14,78 @@ tasks:
     cmds:
       - task --list
 
+  cache:guard:
+    internal: true
+    run: once
+    desc: Discard the rebuildable local Zig cache when it exceeds the size limit
+    cmds:
+      - |
+        bash -euo pipefail <<'BASH'
+        command -v du >/dev/null 2>&1 || {
+          printf 'cache guard: du is required\n' >&2
+          exit 1
+        }
+        command -v find >/dev/null 2>&1 || {
+          printf 'cache guard: find is required\n' >&2
+          exit 1
+        }
+        command -v awk >/dev/null 2>&1 || {
+          printf 'cache guard: awk is required\n' >&2
+          exit 1
+        }
+
+        cache_max_kib='{{.ZIG_CACHE_MAX_KIB}}'
+        [[ "$cache_max_kib" =~ ^[1-9][0-9]*$ ]] || {
+          printf 'cache guard: ZIG_CACHE_MAX_KIB must be a positive integer\n' >&2
+          exit 1
+        }
+
+        [[ ! -L .zig-cache && (! -e .zig-cache || -d .zig-cache) ]] || {
+          printf 'cache guard: refusing unsafe .zig-cache path\n' >&2
+          exit 1
+        }
+        [[ -d .zig-cache ]] || exit 0
+
+        cache_size_kib="$(du -sk -- .zig-cache | awk '{ print $1 }')"
+        ((cache_size_kib > cache_max_kib)) || exit 0
+
+        printf 'cache guard: clearing .zig-cache (%s KiB exceeds %s KiB limit)\n' "$cache_size_kib" "$cache_max_kib"
+        find .zig-cache -depth -mindepth 1 -delete
+        BASH
+
   build:
     desc: Build the project (optimized for debug)
+    deps: [cache:guard]
     cmds:
       - zig build
 
   build:release:
     desc: Build optimized release binary
+    deps: [cache:guard]
     cmds:
       - zig build -Doptimize=ReleaseSafe
 
   build:fast:
     desc: Build optimized for speed (ReleaseFast)
+    deps: [cache:guard]
     cmds:
       - zig build -Doptimize=ReleaseFast
 
   build:small:
     desc: Build optimized for size (ReleaseSmall)
+    deps: [cache:guard]
     cmds:
       - zig build -Doptimize=ReleaseSmall
 
   run:
     desc: Build and run the executable
+    deps: [cache:guard]
     cmds:
       - zig build run
 
   check:
     desc: Check if code compiles without building
+    deps: [cache:guard]
     cmds:
       - zig build check
 
@@ -81,6 +127,7 @@ tasks:
 
   install:
     desc: Install the binary to zig-out/bin
+    deps: [cache:guard]
     cmds:
       - zig build install -Doptimize=ReleaseSafe
 
