@@ -143,3 +143,16 @@ tasks:
       - task: lint:zlint
       - task: build
       - task: test
+
+  hooks:install:
+    desc: Point git at the tracked .githooks directory (pre-commit runs lint, build, test)
+    cmds:
+      - git config core.hooksPath .githooks
+      - chmod +x .githooks/pre-commit
+      - echo "pre-commit hook installed (core.hooksPath = .githooks)"
+
+  hooks:uninstall:
+    desc: Restore git's default hooks path
+    cmds:
+      - git config --unset core.hooksPath || true
+      - echo "pre-commit hook uninstalled"

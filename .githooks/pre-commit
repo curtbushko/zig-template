@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Pre-commit hook: run build, tests, and linter before allowing a commit.
+# Install with: task hooks:install
+set -euo pipefail
+
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root"
+
+if ! command -v task >/dev/null 2>&1; then
+  printf 'pre-commit: `task` not found in PATH. Enter the dev shell (nix develop) or install go-task.\n' >&2
+  exit 1
+fi
+
+printf '\n\033[1mpre-commit:\033[0m running lint...\n'
+task lint
+
+printf '\n\033[1mpre-commit:\033[0m running build...\n'
+task build
+
+printf '\n\033[1mpre-commit:\033[0m running tests...\n'
+task test
+
+printf '\n\033[1mpre-commit:\033[0m all checks passed.\n'

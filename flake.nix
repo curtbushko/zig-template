@@ -49,6 +49,13 @@
           ];
 
           shellHook = ''
+            if [ -d .git ] && [ -x .githooks/pre-commit ]; then
+              current_hooks_path=$(git config --get core.hooksPath || echo "")
+              if [ "$current_hooks_path" != ".githooks" ]; then
+                git config core.hooksPath .githooks
+              fi
+            fi
+
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo "  Zig Template Development Environment"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
